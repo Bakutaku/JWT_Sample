@@ -62,6 +62,7 @@ public class JwtService {
         .refreshToken(refreshToken) // リフレッシュトークン
         .issuedDate(token.getNow()) // 発行日
         .expiresDate(token.getExpires()) // 有効期限
+        .user(user) // 発行者
         .build();
 
     // データベースに保存
@@ -148,6 +149,13 @@ public class JwtService {
       // 例外を発生させる
       throw new JWTVerificationException("This token has expired");
 
+    }
+
+    // トークンのユーザとデータベースの発行者が同じか調べる
+    if (!user.getId().equals(tokenHistory.getUser().getId())) {
+      // 違う場合
+      // 例外を発生させる
+      throw new JWTVerificationException("Token user does not match");
     }
 
     // 結果を返す
