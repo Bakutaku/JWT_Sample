@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -120,7 +119,7 @@ public class JwtService {
    * @param token トークン
    * @return 結果
    */
-  public UserDetails authenticate(String token) throws JWTVerificationException, NoSuchElementException {
+  public User authenticate(String token) throws JWTVerificationException, NoSuchElementException {
 
     // トークン復号
     DecodedJWT deToken = jwt.decodeJwt(token);
@@ -129,7 +128,7 @@ public class JwtService {
     UUID userID = UUID.fromString(deToken.getSubject());
 
     // ユーザがいるか検証(いない場合は例外発生)
-    UserDetails user = userRep.findById(userID)
+    User user = userRep.findById(userID)
         .orElseThrow();
 
     // トークンID取得

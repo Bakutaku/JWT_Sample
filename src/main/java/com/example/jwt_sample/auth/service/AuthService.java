@@ -71,6 +71,7 @@ public class AuthService {
         .email(req.getEmail()) // メールアドレス
         .password(passwordEncoder.encode(req.getPassword())) // パスワード
         .role(AuthRole.USER) // ロール //TODO 将来的にはメールアドレス認証などを行うためTEMPに変更する
+        .valid(true) // アカウントが有効か
         .build(); // 作成
 
     // データベースに登録

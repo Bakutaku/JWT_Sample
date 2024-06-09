@@ -3,12 +3,13 @@ package com.example.jwt_sample.auth.filter;
 import java.io.IOException;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.jwt_sample.auth.model.User;
 import com.example.jwt_sample.auth.service.JwtService;
 
 import jakarta.servlet.FilterChain;
@@ -26,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwt; // JWT操作用
 
-  private final Logger logger; // ログ
+  private final Logger logger = LoggerFactory.getLogger(this.getClass()); // ログ
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -43,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
 
       // トークンを認証する(失敗したら例外発生)
-      UserDetails user = jwt.authenticate(token);
+      User user = jwt.authenticate(token);
 
       // 認証トークン作成(認証情報の登録に使用するもの)
       UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,

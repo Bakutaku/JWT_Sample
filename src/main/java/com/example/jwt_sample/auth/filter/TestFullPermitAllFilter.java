@@ -18,8 +18,9 @@ import lombok.RequiredArgsConstructor;
 /**
  * 全ての通信を認証済みにするテスト用のフィルター
  */
-@Component
-@RequiredArgsConstructor
+// ↓の2つを戻すと設定してなくてもログインしたユーザが仮ユーザになってしまう。
+// @Component
+// @RequiredArgsConstructor
 public class TestFullPermitAllFilter extends OncePerRequestFilter {
 
   @Override
@@ -28,7 +29,7 @@ public class TestFullPermitAllFilter extends OncePerRequestFilter {
 
     // 仮ユーザ作成
     UserDetails user = User
-        .withUsername("User")
+        .withUsername("TempUser")
         .password("Test")
         .roles("ADMIN")
         .build();

@@ -58,7 +58,7 @@ public class User implements UserDetails {
    */
   @Override
   public String getUsername() {
-    return name;
+    return this.name;
   }
 
   /**
@@ -90,6 +90,6 @@ public class User implements UserDetails {
    */
   @Override
   public boolean isEnabled() {
-    return valid;
+    return this.valid;
   }
 }

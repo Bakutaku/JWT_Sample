@@ -67,7 +67,7 @@ public class SecurityConfig {
    * パスワードの暗号化
    */
   @Bean
-  private PasswordEncoder passwordEncoder() {
+  public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
@@ -84,8 +84,6 @@ public class SecurityConfig {
 
   /**
    * パスワード認証の設定
-   * 
-   * @return
    */
   @Bean
   public AuthenticationProvider authenticationProvider() {
