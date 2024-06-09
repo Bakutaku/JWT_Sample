@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.jwt_sample.auth.model.User;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * 実験用のコントローラー
  */
@@ -33,6 +35,11 @@ public class TestController {
 
     return ResponseEntity.ok(((User) user).getName());
 
+  }
+
+  @GetMapping("get/ip")
+  public ResponseEntity<String> getIp(HttpServletRequest req) {
+    return ResponseEntity.ok(req.getRemoteAddr());
   }
 
 }

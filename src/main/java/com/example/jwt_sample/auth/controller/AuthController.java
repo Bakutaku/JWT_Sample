@@ -35,10 +35,17 @@ public class AuthController {
     return ResponseEntity.ok(service.basicLogin(req));
   }
 
+  /**
+   * ユーザを作成する
+   * 
+   * @param req {@link CreateUserRequest}
+   */
   @PostMapping("/create/user")
   public ResponseEntity<TokenResponse> createUser(@RequestBody CreateUserRequest req) {
     // ユーザ作成処理を実行 & 結果を返す
     return ResponseEntity.ok(service.createUser(req));
   }
+
+  // TODO リフレッシュトークンによるトークン再発行
 
 }
