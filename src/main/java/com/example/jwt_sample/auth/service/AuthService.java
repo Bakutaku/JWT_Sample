@@ -1,5 +1,6 @@
 package com.example.jwt_sample.auth.service;
 
+import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -108,7 +109,7 @@ public class AuthService {
     String reqToken = jwt.removalToken(req.getToken());
 
     // 復号したトークンID格納用
-    String tokenID = "";
+    String tokenID;
 
     try {
       // トークンからトークンIDを取得
@@ -133,8 +134,21 @@ public class AuthService {
       throw new NoSuchElementException();
     }
 
+    // 現在時刻取得
+    Date now = new Date();
+
+    // リフレッシュトークンの有効期限が切れていないか確かめる
+    if (now.after(tokenHistory.getRefreshExpiresDate())) {
+      // 切れている場合
+      // 例外発生
+      throw new NoSuchElementException();
+    }
+
     // トークン生成
     Token token = jwt.createToken(tokenHistory.getUser());
+
+    // トークンの履歴をデータベースから削除
+    tokenRep.delete(tokenHistory);
 
     // 戻り値作成 & 値を返す
     return RefreshResponse.builder()

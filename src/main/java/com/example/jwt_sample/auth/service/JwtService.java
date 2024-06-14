@@ -1,5 +1,6 @@
 package com.example.jwt_sample.auth.service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -33,6 +34,9 @@ public class JwtService {
   @Value("${jwt.security.start.text}")
   private String TOKEN_START; // トークンの始まりの文字
 
+  @Value("${jwt.security.access.refresh.expiration}")
+  private Integer REFRESH_EXPIRATION; // リフレッシュトークンの有効期限
+
   // データベース操作用
   private final UserRepository userRep; // usersテーブル
   private final TokenHistoryRepository tokenRep; // tokensテーブル
@@ -56,14 +60,25 @@ public class JwtService {
     // リフレッシュトークン作成
     UUID refreshToken = UUID.randomUUID();
 
+    // リフレッシュトークンの有効期限作成
+    // 有効期限取得
+    Calendar cal = Calendar.getInstance();
+
+    // 現在時刻設定
+    cal.setTime(token.getNow());
+
+    // 有効期限分追加
+    cal.add(Calendar.HOUR, REFRESH_EXPIRATION);
+
     // レコード作成
     TokenHistory recode = TokenHistory.builder()
         .tokenId(token_id) // トークンID
         .refreshToken(refreshToken) // リフレッシュトークン
         .issuedDate(token.getNow()) // 発行日
         .expiresDate(token.getExpires()) // 有効期限
+        .refreshExpiresDate(cal.getTime()) // リフレッシュトークンの有効期限
         .user(user) // 発行者
-        .build();
+        .build(); // 作成
 
     // データベースに保存
     tokenRep.save(recode);

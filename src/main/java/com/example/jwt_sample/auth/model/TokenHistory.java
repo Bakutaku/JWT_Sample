@@ -36,4 +36,5 @@ public class TokenHistory {
   private UUID refreshToken; // リフレッシュトークン
   private Date issuedDate; // 発行日
   private Date expiresDate; // 有効期限
+  private Date refreshExpiresDate; // リフレッシュトークンの有効期限
 }
