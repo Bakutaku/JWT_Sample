@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.jwt_sample.auth.bean.form.BasicLoginRequest;
 import com.example.jwt_sample.auth.bean.form.CreateUserRequest;
+import com.example.jwt_sample.auth.bean.form.RefreshRequest;
+import com.example.jwt_sample.auth.bean.form.RefreshResponse;
 import com.example.jwt_sample.auth.bean.form.TokenResponse;
 import com.example.jwt_sample.auth.service.AuthService;
 
@@ -46,6 +48,16 @@ public class AuthController {
     return ResponseEntity.ok(service.createUser(req));
   }
 
-  // TODO リフレッシュトークンによるトークン再発行
+  /**
+   * トークンの再発行
+   * 
+   * @param req {@link RefreshResponse}
+   */
+  @PostMapping("/refresh/token")
+  public ResponseEntity<RefreshResponse> refresh(@RequestBody RefreshRequest req) {
+    // トークンの再発行 & 結果を返す
+    System.out.println("OKkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+    return ResponseEntity.ok(service.refreshToken(req));
+  }
 
 }

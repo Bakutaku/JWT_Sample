@@ -25,12 +25,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "tokens") // テーブル(おまじないみたいなもの)
 public class TokenHistory {
 
-  @Id
-  @GeneratedValue
+  @Id // 主キー
+  @GeneratedValue // 値の自動生成
   private Integer id; // ID
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @ManyToOne // 外部キー
+  @JoinColumn(name = "user_id", referencedColumnName = "id") // 参照元
   private User user; // 発行者
   private UUID tokenId; // トークンID
   private UUID refreshToken; // リフレッシュトークン

@@ -1,15 +1,24 @@
 package com.example.jwt_sample.auth.service;
 
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.jwt_sample.auth.bean.Token;
 import com.example.jwt_sample.auth.bean.form.BasicLoginRequest;
 import com.example.jwt_sample.auth.bean.form.CreateUserRequest;
+import com.example.jwt_sample.auth.bean.form.RefreshRequest;
+import com.example.jwt_sample.auth.bean.form.RefreshResponse;
 import com.example.jwt_sample.auth.bean.form.TokenResponse;
+import com.example.jwt_sample.auth.model.TokenHistory;
 import com.example.jwt_sample.auth.model.User;
+import com.example.jwt_sample.auth.repository.TokenHistoryRepository;
 import com.example.jwt_sample.auth.repository.UserRepository;
 import com.example.jwt_sample.auth.role.AuthRole;
 
@@ -23,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
   private final UserRepository userRep; // ユーザテーブル
+  private final TokenHistoryRepository tokenRep; // トークンテーブル
 
   private final AuthenticationManager authManager; // basic認証に使用するもの
   private final PasswordEncoder passwordEncoder; // パスワードのハッシュ化用
@@ -87,4 +97,49 @@ public class AuthService {
         .build(); // 作成
   }
 
+  /**
+   * トークンの再発行
+   * 
+   * @param req {@link RefreshRequest}
+   * @return {@link RefreshResponse}
+   */
+  public RefreshResponse refreshToken(RefreshRequest req) {
+    // トークン取得
+    String reqToken = jwt.removalToken(req.getToken());
+
+    // 復号したトークンID格納用
+    String tokenID = "";
+
+    try {
+      // トークンからトークンIDを取得
+      tokenID = jwt.extractTokenId(reqToken);
+    } catch (TokenExpiredException e) {
+      // 有効期限切れの場合、認証なしで複合 & ID取得
+      tokenID = JWT.decode(reqToken).getId();
+    } catch (Exception e) {
+      // それ以外の例外
+      // 例外を再度発生
+      throw e;
+    }
+
+    // データベースから一致するレコードを取得する(無ければ例外)
+    TokenHistory tokenHistory = tokenRep.findByTokenId(UUID.fromString(tokenID))
+        .orElseThrow();
+
+    // リフレッシュトークンが一致するか
+    if (!tokenHistory.getRefreshToken().equals(UUID.fromString(req.getRefreshToken()))) {
+      // 一致しない場合
+      // 例外発生
+      throw new NoSuchElementException();
+    }
+
+    // トークン生成
+    Token token = jwt.createToken(tokenHistory.getUser());
+
+    // 戻り値作成 & 値を返す
+    return RefreshResponse.builder()
+        .token(token.getToken()) // トークン
+        .refreshToken(token.getRefreshToken()) // リフレッシュトークン
+        .build(); // 作成
+  }
 }

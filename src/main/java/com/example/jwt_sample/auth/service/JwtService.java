@@ -81,7 +81,7 @@ public class JwtService {
    * トークンからユーザIDを取得する
    * 
    * @param token
-   * @return
+   * @return ユーザID
    */
   public String extractUserId(String token) {
     // 復号
@@ -89,6 +89,36 @@ public class JwtService {
 
     // ユーザデータを返す
     return deToken.getSubject();
+  }
+
+  /**
+   * トークンからトークンIDを取得する
+   * 
+   * @param token
+   * @return トークンID
+   */
+  public String extractTokenId(String token) {
+    // 復号
+    DecodedJWT deToken = jwt.decodeJwt(token);
+
+    // トークンIDを取得 & 返す
+    return deToken.getId();
+  }
+
+  /**
+   * トークンに含まれている不要な物を取り除く
+   * 
+   * @param token そのままのトークン
+   * @return JWTトークン
+   */
+  public String removalToken(String token) {
+    // トークンがTOKEN_STARTの値から始まるか
+    if (token.startsWith(TOKEN_START)) {
+      // TOKEN_STARTの文字を取り除く
+      token = token.substring(TOKEN_START.length());
+    }
+    // 結果を返す
+    return token;
   }
 
   /**
@@ -161,4 +191,5 @@ public class JwtService {
     // 結果を返す
     return user;
   }
+
 }
