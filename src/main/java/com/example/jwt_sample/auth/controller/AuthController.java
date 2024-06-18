@@ -56,7 +56,6 @@ public class AuthController {
   @PostMapping("/refresh/token")
   public ResponseEntity<RefreshResponse> refresh(@RequestBody RefreshRequest req) {
     // トークンの再発行 & 結果を返す
-    System.out.println("OKkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
     return ResponseEntity.ok(service.refreshToken(req));
   }
 

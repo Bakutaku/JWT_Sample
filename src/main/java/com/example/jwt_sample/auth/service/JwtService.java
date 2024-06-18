@@ -80,6 +80,9 @@ public class JwtService {
         .user(user) // 発行者
         .build(); // 作成
 
+    // データベースに同じユーザが発行したトークンがあれば削除する
+    tokenRep.deleteByUser(user);
+
     // データベースに保存
     tokenRep.save(recode);
 
